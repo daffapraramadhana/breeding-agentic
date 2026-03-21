@@ -1,0 +1,10 @@
+# Sub-repos (they have their own git history)
+breeding-app/
+breeding-dashboard/
+
+# Environment
+.env*
+
+# OS
+.DS_Store
+Thumbs.db

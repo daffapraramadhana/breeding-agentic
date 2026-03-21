@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run *)",
+      "Bash(npx prisma *)",
+      "Bash(npx nest *)",
+      "Bash(npx next *)",
+      "Bash(npx tsc *)",
+      "Bash(git *)",
+      "Bash(ls *)",
+      "Bash(cat *)",
+      "Bash(curl *)",
+      "Bash(node *)",
+      "Bash(xargs *)"
+    ]
+  }
+}
