@@ -124,7 +124,7 @@ Row 4: Three small stat cards (33/33/33)
 
 ### Components
 
-All dashboard-specific components in `src/app/(dashboard)/_components/`:
+All dashboard-specific components in `src/app/(dashboard)/components/`:
 
 | Component | Chart Type | Data Source |
 |-----------|-----------|-------------|
@@ -226,12 +226,12 @@ Single full-page skeleton while data loads (reuse existing `CardSkeleton`). Show
 - `breeding-app/src/modules/dashboard/dashboard.controller.ts`
 - `breeding-app/src/modules/dashboard/dashboard.service.ts`
 - `breeding-app/src/modules/dashboard/dto/query-dashboard-trends.dto.ts`
-- `breeding-dashboard/src/app/(dashboard)/_components/dashboard-kpi-banner.tsx`
-- `breeding-dashboard/src/app/(dashboard)/_components/mortality-fcr-chart.tsx`
-- `breeding-dashboard/src/app/(dashboard)/_components/project-phase-chart.tsx`
-- `breeding-dashboard/src/app/(dashboard)/_components/sales-trend-chart.tsx`
-- `breeding-dashboard/src/app/(dashboard)/_components/stock-alerts-list.tsx`
-- `breeding-dashboard/src/app/(dashboard)/_components/operational-cards.tsx`
+- `breeding-dashboard/src/app/(dashboard)/components/dashboard-kpi-banner.tsx`
+- `breeding-dashboard/src/app/(dashboard)/components/mortality-fcr-chart.tsx`
+- `breeding-dashboard/src/app/(dashboard)/components/project-phase-chart.tsx`
+- `breeding-dashboard/src/app/(dashboard)/components/sales-trend-chart.tsx`
+- `breeding-dashboard/src/app/(dashboard)/components/stock-alerts-list.tsx`
+- `breeding-dashboard/src/app/(dashboard)/components/operational-cards.tsx`
 
 ### Modified files:
 - `breeding-app/src/app.module.ts` — register DashboardModule
