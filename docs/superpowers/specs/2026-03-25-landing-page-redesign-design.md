@@ -105,7 +105,7 @@ Redesign the BreedSmart landing page to unify its visual identity with the dashb
 ## Parallax Photo Dividers
 
 Between Features → AI section, use a **parallax photo divider** (50vh height):
-- Poultry house photo (user-provided) with `background-attachment: fixed`
+- Poultry house photo (user-provided) with Framer Motion `useScroll` + `useTransform` for parallax (`background-attachment: fixed` is broken on iOS Safari — use transform-based parallax instead)
 - Gradient fade overlay on top and bottom edges to blend into adjacent sections
 - Creates a visual break and photographic depth between the light and dark sections
 
