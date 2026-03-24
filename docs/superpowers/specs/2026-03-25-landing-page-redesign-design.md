@@ -61,9 +61,11 @@ Redesign the BreedSmart landing page to unify its visual identity with the dashb
 - **Animation:** Cards stagger-in on scroll (Framer Motion `whileInView` + `staggerChildren`)
 - **Responsive:** 3 cols → 2 cols (tablet) → 1 col (mobile)
 
-### 4. AI Section (Dark Glassmorphic)
-- **Background:** `linear-gradient(180deg, #151520, #111828, #151520)` with subtle radial green/purple glows
-- **Layout:** 2-column grid — text + features on left, chat mockup on right
+### 4. AI Section (Floating Dark Card)
+- **Layout:** Floating dark rounded container on the same warm background — NOT a full-bleed dark section
+- **Wrapper:** Warm background matching surrounding sections (`#e8e6f0`), horizontal padding 20px
+- **Card:** `max-width: 1600px`, `border-radius: 28px`, `background: linear-gradient(180deg, #161622 0%, #111828 50%, #161622 100%)`, `box-shadow: 0 8px 60px rgba(0,0,0,0.15)` + `inset 0 0 0 1px rgba(255,255,255,0.04)`, subtle radial green/purple glows
+- **Inner layout:** 2-column grid — text + features on left, chat mockup on right
 - **Heading:** `clamp(32px, 4vw, 52px)`, `font-weight: 300`, white text, accent in `#5cb87a`
 - **AI Feature list (4 items):**
   - Glass cards: `rgba(255,255,255,0.04)` bg, `border: 1px solid rgba(255,255,255,0.06)`, 14px radius, backdrop blur
@@ -88,12 +90,12 @@ Redesign the BreedSmart landing page to unify its visual identity with the dashb
 - **Animation:** `useCountUp` hook — numbers animate from 0 to target on scroll into view (IntersectionObserver)
 - **Responsive:** 4 cols → 2 cols (tablet) → 2 cols (mobile)
 
-### 6. CTA (Photo Background)
-- **Background:** Full-bleed farm photo (free-range hens), `filter: brightness(0.4)` overlay
-- **Layout:** Centered text over photo
-- **Heading:** `clamp(36px, 6vw, 68px)`, white, "Ready to run your farm smarter?" with accent
-- **Subheadline:** 16px, `rgba(255,255,255,0.6)`
-- **CTA button:** Green gradient, 12px radius, larger padding (16px 40px), shadow
+### 6. CTA (Warm Background, Centered)
+- **Background:** Continuous warm gradient matching page — `linear-gradient(180deg, #e8e6f0, #ebe9f0, #f0eeeb)` (no photo)
+- **Layout:** Centered text
+- **Heading:** `clamp(34px, 5.5vw, 64px)`, `color: #1a1a1a`, "Ready to run your farm smarter?" with accent in `#3d8c5c`
+- **Subheadline:** 16px, `color: #999`, centered, max-width 380px
+- **CTA button:** Green gradient, 12px radius, larger padding (16px 44px), shadow
 - **Responsive:** Font scales via clamp, button full-width on mobile
 
 ### 7. Footer
@@ -102,12 +104,11 @@ Redesign the BreedSmart landing page to unify its visual identity with the dashb
 - **Typography:** 10px uppercase group headers, 12px muted links
 - **Copyright:** Bottom with top border divider
 
-## Parallax Photo Dividers
+## Section Transitions
 
-Between Features → AI section, use a **parallax photo divider** (50vh height):
-- Poultry house photo (user-provided) with Framer Motion `useScroll` + `useTransform` for parallax (`background-attachment: fixed` is broken on iOS Safari — use transform-based parallax instead)
-- Gradient fade overlay on top and bottom edges to blend into adjacent sections
-- Creates a visual break and photographic depth between the light and dark sections
+The page uses a **continuous warm gradient background** that flows through all sections. There is no light-to-dark background transition — instead, the AI section is a floating dark card on the warm background. This eliminates the need for parallax dividers or color transition zones between sections.
+
+The poultry house photo (user-provided) can optionally be used as a subtle parallax background element within the AI card or reserved for future use.
 
 ## Design System (Dashboard Alignment)
 
