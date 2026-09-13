@@ -16,6 +16,9 @@ Jawaban stakeholder: `docs/stakeholder/`.
 | `2026-09-13-goods-consumption-input-pemakaian-barang.png` | Logistik › Input Data Pemakaian Barang | `goods-consumption` | Header: Area, nomor otomatis, tanggal, keterangan, **tujuan pemakaian** (radio Area / Farm / Kandang Ownfarm). Per baris: produk, **No. Referensi = BPB**, kuantitas, keterangan. Tidak ada ekspedisi — barang dipakai di tempat. |
 | `2026-09-13-supplier-input-data-suplier.png` | Master › Input Data Suplier | `supplier` | Kode, nama, alamat, no. rekening + atas nama, keterangan, **hari jatuh tempo** (default 30). **Klasifikasi Kategori Produk**: 10 kategori (DOC BROILER, DOC JANTAN, OVK, PAKAN, PERLENGKAPAN PRODUKSI, PENGELUARAN OPERASIONAL, FIXED ASSET, AYAM BESAR, JASA UMUM, **JASA EXPEDISI**) — supplier diklasifikasikan ke satu atau lebih kategori. |
 | `2026-09-13-supplier-input-modal-kategori-produk.png` | Master › Input Data Suplier › modal Kategori Produk | `supplier` | Klik `+` pada kategori (di sini OVK) membuka modal daftar produk per sub-kategori (OBAT, VAKSIN) dengan checkbox + "Pilih Semua". Jadi klasifikasi supplier turun sampai **produk mana saja yang dipasok** supplier ini. |
+| `2026-09-13-sales-order-input-penjualan-barang-empty.png` | Marketing › Input Detail Penjualan Barang (Pesanan) | `sales-order` | Header: Area, Customer, Alamat, Nama Penerima, Tanggal **s/d**, TOP, Plafon, Saldo Customer. Per baris: produk, asal (Area/Farm/Kandang Ownfarm), Sisa Stok, **AVG·Qty·Tonase**, Afkir, Bobot Minimum, Harga Rekomendasi, Harga Jual, Tabungan/Kg. Footer PPN %. |
+| `2026-09-13-sales-order-input-penjualan-barang-customer-selected.png` | sama, customer terpilih | `sales-order` | TOP `3 Hari klik disini` (kuning = warning), Plafon `Rp (50.000.000)`, Saldo `Rp (3.500)` merah. |
+| `2026-09-13-customer-input-data-customer.png` | Master › Input Data Customer | `customer` | Kode, Nama, Area Pendaftaran, Alamat, Kota, No KTP*, NPWP, **Plat Nomor Mobil***, Keterangan, **Operasional** (multi-area), **Plafon** toggle + Limit, **TOP** hari, **Cicilan/Kg**, **Tabungan/Kg**. Definisi tooltip di `docs/superpowers/specs/2026-09-13-sales-module-finding.md` §S-7. |
 | `2026-09-13-goods-return-input-retur-pembelian.png` | Logistik › Input Data Retur Pembelian | `goods-return` | Header: Area, tanggal, keterangan, **PO** (hanya yang belum ada pembayaran supplier), **BPB** (hanya yang belum ada pemakaian), nama barang. Tidak ada ekspedisi & surat jalan di form ini. |
 
 ## Pola yang berulang di semua form
@@ -28,6 +31,10 @@ Jawaban stakeholder: `docs/stakeholder/`.
 ## Temuan penting dari master supplier
 
 `JASA EXPEDISI` adalah salah satu **kategori produk** yang bisa ditempelkan ke supplier. Jadi pembanding sebenarnya *punya* penanda jasa angkut — lewat klasifikasi kategori, bukan kolom khusus. Ini merevisi pembacaan F-1 di finding doc: kemungkinan dropdown Ekspedisi memang difilter kategori `JASA EXPEDISI`, dan `BERKAH BREEDING FARM` muncul karena **sengaja** diklasifikasikan sebagai jasa ekspedisi (armada farm sendiri ditagihkan sebagai supplier). Belum terverifikasi — perlu dicek isi klasifikasi `BERKAH BREEDING FARM` di master mereka.
+
+## Alur penjualan (ditelusuri langsung, tanpa screenshot)
+
+List/detail pesanan, edit realisasi, jual ke peternak, pengiriman, penerimaan uang, refund, pembekuan piutang, master pendukung — dicatat di `docs/superpowers/specs/2026-09-13-sales-module-finding.md`.
 
 ## Hal yang belum jelas dari screenshot
 
