@@ -1,7 +1,7 @@
 # Ekspedisi & Surat Jalan — Klasifikasi Supplier, Goods Transfer, Goods Receipt
 
 **Dibuat:** 2026-09-13
-**Status:** Design
+**Status:** Implemented (2026-09-13) — lihat plan `docs/superpowers/plans/2026-09-13-logistics-expedition.md`
 **Menggantikan:** `2026-04-19-goods-transfer-expedition-design.md` (superseded — asumsi armada internal terbantah oleh jawaban stakeholder `Q-GT-1`=(b))
 **Sumber keputusan:** `docs/stakeholder/2026-09-06-pertanyaan-ekspedisi-pengiriman-jawaban.docx`, `docs/superpowers/specs/2026-09-05-logistics-expedition-finding.md`, `docs/reference/programbroiler/`
 **Repo terdampak:** `breeding-app` (Prisma, master-data, transfer, procurement), `breeding-dashboard`

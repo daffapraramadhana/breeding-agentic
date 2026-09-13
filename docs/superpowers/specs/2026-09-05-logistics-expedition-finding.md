@@ -479,6 +479,7 @@ URL: `...`
 
 | Tanggal | Perubahan |
 |---|---|
+| 2026-09-13 | Spec 2026-09-13 diimplementasi: klasifikasi supplier, dispatch transfer, carrier di receipt. Stock movement transfer masih terbuka (spec terpisah). Bug lama diperbaiki: form supplier di dashboard tidak mengirim `code`. Migration enum `PREPARING` dipisah ke migration sendiri (Postgres tidak bisa memakai enum value baru dalam transaksi yang sama). |
 | 2026-09-05 | Dibuat untuk `goods-receipt` (form INPUT DATA PENERIMAAN PO). |
 | 2026-09-05 | Ditambah `goods-transfer` (form INPUT PINDAH BARANG); ditemukan konflik `K-1`…`K-3` dengan spec `2026-04-19`. |
 | 2026-09-05 | Isi dropdown `Ekspedisi` terverifikasi → `F-1`. Dugaan "PT afiliasi" **terbantah**; `K-1` naik jadi konflik terkonfirmasi. |
