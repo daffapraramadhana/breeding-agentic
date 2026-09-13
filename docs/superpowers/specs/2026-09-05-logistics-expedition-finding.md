@@ -1,7 +1,9 @@
 # Ekspedisi & Dokumen Pengiriman — Finding Lintas Modul
 
 **Dibuat:** 2026-09-05
-**Status:** Terbuka — menunggu jawaban stakeholder
+**Status:** 10/11 terjawab (2026-09-13). Keputusan diturunkan ke `2026-09-13-logistics-expedition-design.md`. Sisa: `Q-GT-3` + item follow-up di [Belum diperiksa](#belum-diperiksa).
+**Jawaban stakeholder:** `docs/stakeholder/2026-09-06-pertanyaan-ekspedisi-pengiriman-jawaban.docx`
+**Screenshot pembanding:** `docs/reference/programbroiler/`
 **Sumber pembanding:** `app1.programbroiler.com`
 **Repo terdampak:** `breeding-app` (Prisma, procurement/logistics), `breeding-dashboard`
 
@@ -30,14 +32,14 @@
 
 | Modul | Ditelusuri | Pertanyaan | Terjawab | Bisa jalan tanpa jawaban |
 |---|---|---|---|---|
-| `goods-receipt` | ✅ | `Q-GR-1` … `Q-GR-3` | 0/3 | — |
-| `goods-transfer` | ✅ | `Q-GT-1` … `Q-GT-5` | 0/5 | **`T-1`** (referensi BPB) |
-| lintas modul | ✅ | `Q-GEN-1` … `Q-GEN-3` | 0/3 | — |
-| `goods-return` | ❌ | — | — | — |
+| `goods-receipt` | ✅ | `Q-GR-1` … `Q-GR-3` | 3/3 | — |
+| `goods-transfer` | ✅ | `Q-GT-1` … `Q-GT-5` | 4/5 (`Q-GT-3` kosong) | **`T-1`** (referensi BPB) |
+| lintas modul | ✅ | `Q-GEN-1` … `Q-GEN-3` | 3/3 | — |
+| `goods-return` | ✅ ditutup | — | — | form pembanding tidak punya ekspedisi/surat jalan (`docs/reference/programbroiler/2026-09-13-goods-return-input-retur-pembelian.png`) |
 | `internal-trade` | ❌ | — | — | — |
 | `delivery` | ❌ (sudah punya pola) | — | — | — |
 
-**Total pertanyaan terbuka: 11.**
+**Total pertanyaan terbuka: 1** (`Q-GT-3`). Follow-up non-blocking di [Belum diperiksa](#belum-diperiksa).
 
 ---
 
@@ -72,7 +74,7 @@ Kode tertinggi terlihat `S-049` → puluhan entri.
 1. Master ekspedisi memakai tabel supplier yang sama dengan supplier pakan/obat.
 2. Bukan armada internal — tidak ada plat nomor atau nama sopir sebagai entitas.
 3. Bercampur: perusahaan ekspedisi, pemilik truk perorangan, dan entitas internal grup dalam satu daftar.
-4. **Tidak difilter kategori** — `BERKAH BREEDING FARM` adalah farm, bukan jasa angkut, tapi tetap muncul.
+4. ~~**Tidak difilter kategori** — `BERKAH BREEDING FARM` adalah farm, bukan jasa angkut, tapi tetap muncul.~~ **Direvisi 2026-09-13**: master supplier pembanding punya *Klasifikasi Kategori Produk* (10 kategori, termasuk `JASA EXPEDISI`) — lihat `docs/reference/programbroiler/2026-09-13-supplier-input-data-suplier.png`. Jadi penanda **ada**, lewat klasifikasi kategori. Kemungkinan `BERKAH BREEDING FARM` memang diklasifikasikan `JASA EXPEDISI` (armada farm sendiri ditagihkan sebagai supplier). Belum terverifikasi — perlu buka edit supplier itu di master mereka.
 
 ### F-2 · Nama master dipakai menyimpan atribut (anti-pola)
 
@@ -209,7 +211,7 @@ Modul yang kemungkinan punya kebutuhan serupa. Belum dibuka form pembandingnya.
 
 | Modul | Kenapa kandidat | Petunjuk awal |
 |---|---|---|
-| `goods-return` | retur ke supplier = barang keluar, butuh pengangkut & surat jalan | `GoodsReturn` punya `supplierReceivedDate` tapi tidak ada ekspedisi — `prisma/schema.prisma:1309` |
+| ~~`goods-return`~~ | **Ditutup 2026-09-13** — form retur pembanding tidak punya ekspedisi/surat jalan, hanya PO → BPB → barang | `docs/reference/programbroiler/2026-09-13-goods-return-input-retur-pembelian.png` |
 | `internal-trade` | jual-beli antar cabang, barang fisik berpindah | model `InternalTrade` (`prisma/schema.prisma:1357`) tidak punya ekspedisi; `LogisticsShippingCost.internalTradeId` **sudah ada** tapi belum terpakai — `prisma/schema.prisma:1469` |
 | `delivery` | sudah punya vehicle+driver+helper | perlu dicek apakah pembanding punya field ekspedisi eksternal juga — kalau ya, `Delivery` kita mungkin kurang |
 
@@ -227,6 +229,8 @@ Penomoran berprefix modul supaya penambahan modul baru tidak menggeser nomor lam
 
 #### `Q-GEN-1` — Master ekspedisi disimpan di mana?
 
+> **Jawaban: (a)** — semua sudah terdaftar sebagai supplier. Penanda kategori: mengikuti pembanding, lewat klasifikasi `Supplier ↔ ProductCategory` + `ProductCategory.isExpedition`.
+
 - **(a) Pakai `Supplier` yang sudah ada** → nol tabel baru. **Wajib disertai penanda kategori** — lihat catatan.
 - **(b) Tabel master `Carrier` sendiri** → lebih bersih secara domain; satu tabel + CRUD + halaman baru.
 - **(c) Pakai `Vehicle` yang sudah ada** → hanya masuk akal kalau semua pengangkutan pakai armada sendiri (lihat `Q-GT-1`).
@@ -237,6 +241,8 @@ Penomoran berprefix modul supaya penambahan modul baru tidak menggeser nomor lam
 
 #### `Q-GEN-2` — Data apa yang perlu dilacak per pengiriman?
 
+> **Jawaban:** hanya "Nomor Surat jalan" yang ditulis. Nama ekspedisi tidak dicentang tapi diasumsikan tetap dicatat (konsisten dengan `Q-GEN-1`/`Q-GR-1`/`Q-GT-1`). Plat, sopir, tanggal kirim: **tidak**.
+
 Menentukan seberapa jauh scope. Pilih yang berlaku:
 
 - [ ] Nama ekspedisi saja
@@ -246,12 +252,16 @@ Menentukan seberapa jauh scope. Pilih yang berlaku:
 
 #### `Q-GEN-3` — Perlu evaluasi vendor angkut?
 
+> **Jawaban: (b)** — tidak.
+
 - **(a) Ya** — perlu laporan keterlambatan / kerusakan per ekspedisi → field harus relasi terstruktur, bukan teks bebas.
 - **(b) Tidak** — cukup untuk pencatatan biaya.
 
 ### `goods-receipt` — `Q-GR-*`
 
 #### `Q-GR-1` — Ongkir barang masuk dari supplier dibayar siapa?
+
+> **Jawaban: (b)** — kita yang tanggung. Bagian B tidak gugur.
 
 **Penentu utama** — menentukan apakah field ekspedisi perlu ada sama sekali di modul ini.
 
@@ -260,6 +270,8 @@ Menentukan seberapa jauh scope. Pilih yang berlaku:
 - **(c) Campuran** tergantung supplier atau jenis barang → perlu, plus penanda per transaksi.
 
 #### `Q-GR-2` — Satu penerimaan bisa dibagi ke berapa ekspedisi?
+
+> **Jawaban: (c)** — bisa, tapi jarang. Header saja.
 
 Menentukan level field: header atau per baris.
 
@@ -270,6 +282,8 @@ Menentukan level field: header atau per baris.
 > Pembanding memilih per-baris. Kalau operasional kita 1 penerimaan = 1 truk, meniru per-baris hanya memperpanjang form tanpa manfaat.
 
 #### `Q-GR-3` — Ongkir harus masuk HPP barang?
+
+> **Jawaban: (b)** — biaya operasional. R-4 gugur.
 
 **Masalah terpisah, mungkin lebih mendesak daripada field ekspedisi.**
 
@@ -282,6 +296,8 @@ Kalau (a), lanjutan: dasar alokasinya apa — nilai, kuantitas, atau berat?
 
 #### `Q-GT-1` — Pindah barang antar gudang diangkut siapa?
 
+> **Jawaban: (b)** — vendor jasa ekspedisi. Spec `2026-04-19` **superseded** oleh `2026-09-13-logistics-expedition-design.md`.
+
 **Menentukan `Vehicle` vs carrier — dan apakah spec `2026-04-19` perlu direvisi.**
 
 - **(a) Truk milik sendiri** → spec `2026-04-19` **tetap valid**, konflik `K-1` gugur.
@@ -293,6 +309,8 @@ Kalau (a), lanjutan: dasar alokasinya apa — nilai, kuantitas, atau berat?
 
 #### `Q-GT-2` — Satu pindah barang = satu kendaraan?
 
+> **Jawaban: (a)** — selalu satu truk. Header.
+
 Menentukan header vs per-baris untuk ekspedisi dan surat jalan.
 
 - **(a) Selalu satu truk** → ekspedisi + surat jalan di **header**. Operator tidak mengetik nomor yang sama berulang.
@@ -302,6 +320,8 @@ Menentukan header vs per-baris untuk ekspedisi dan surat jalan.
 
 #### `Q-GT-3` — Nomor surat jalan: diterbitkan siapa, wajib tercatat?
 
+> **Jawaban: kosong** — kotak jawaban berisi salinan pertanyaan. **Perlu ditanya ulang.** Asumsi sementara di spec: input manual, opsional, tidak unik.
+
 - Auto-generate sistem, atau input manual dari dokumen fisik?
 - Wajib atau opsional?
 - Perlu unik per tenant?
@@ -310,12 +330,16 @@ Menentukan header vs per-baris untuk ekspedisi dan surat jalan.
 
 #### `Q-GT-4` — Pindah barang perlu telusur asal BPB?
 
+> **Jawaban: (a)** — ya.
+
 - **(a) Ya** → tambah `goodsReceiptLineId` di `GoodsTransferLine`, mirroring `GoodsConsumptionLine`.
 - **(b) Tidak** → cukup produk + kuantitas.
 
 > Kemungkinan besar (a). `goods-consumption` sudah punya telusur BPB. Kalau pindah barang tidak punya, rantai telusur putus di tengah — barang pindah gudang lalu kehilangan asal-usulnya.
 
 #### `Q-GT-5` — `GoodsTransfer` perlu status `PREPARING` (draft)?
+
+> **Jawaban: (a)** — dua langkah. Catatan: transfer saat ini **tidak menggerakkan stok sama sekali**; stock movement transfer dipisah jadi spec tersendiri (lihat non-goal di spec 2026-09-13).
 
 - **(a) Ya** → lanjutkan spec `2026-04-19`; ada tahap draft, stok baru berkurang saat dispatch.
 - **(b) Tidak** → sederhanakan spec; sekali simpan langsung `IN_TRANSIT` seperti pembanding.
@@ -326,7 +350,7 @@ Menentukan header vs per-baris untuk ekspedisi dan surat jalan.
 
 ## Opsi solusi
 
-Belum diputuskan. Diurutkan per modul, dari yang paling murah.
+**Diputuskan 2026-09-13**: `R-2` (+ `deliveryNoteNumber`), `T-1`, `T-2`, `T-3b`, `T-4` tanpa stock movement. Gugur: `R-0`, `R-1`, `R-3`, `R-4`, `T-3a`. Detail di `2026-09-13-logistics-expedition-design.md`. Tabel di bawah dipertahankan sebagai riwayat.
 
 ### `goods-receipt` — `R-*`
 
@@ -390,9 +414,22 @@ Backend: mirror `GoodsConsumptionLine` — `goodsReceiptLineId String?`, relasi 
 
 ### Belum diperiksa
 
-- Apakah `/logistics-shipping-costs` sebaiknya tetap halaman terpisah atau dilebur ke form penerimaan.
-- Arti kolom `Transport` dan `Pakai Di Kandang` di kedua form pembanding.
-- Modul kandidat di [M-3+](#m-3--kandidat-belum-ditelusuri).
+Follow-up ke stakeholder / screenshot pembanding, **tidak memblokir** spec 2026-09-13:
+
+| # | Item | Menutup apa |
+|---|---|---|
+| 1 | `Q-GT-3` — surat jalan: sistem/manual, wajib/opsional, unik? | validasi + UI `deliveryNoteNumber` |
+| 2 | Konfirmasi `Q-GEN-2`: nama ekspedisi tetap dicatat? | apakah combobox ekspedisi ditampilkan |
+| 3 | Menu **Master** pembanding dibuka | ada master Armada/Ekspedisi terpisah? |
+| 4 | Master › Suplier › edit `BERKAH BREEDING FARM` | verifikasi revisi F-1 |
+| 5 | Master › Kategori Produk (kalau ada) | 10 kategori fixed atau editable |
+| 6 | Input Pindah Barang / Penerimaan PO **setelah 1 baris ditambah** | isi section `EKSPEDISI`, kolom `Transport`, `Tipe`, `Pakai Di Kandang` |
+| 7 | Dropdown Ekspedisi di Penerimaan PO dibuka | sama dengan di Pindah Barang? |
+| 8 | Detail Pindah Barang / Penerimaan tersimpan | ada tahapan status? |
+| 9 | Di mana biaya angkut dicatat di pembanding | alur `LogisticsShippingCost` |
+| 10 | Menu **Logistik** dibuka | ada internal-trade? |
+
+Internal (bukan stakeholder): apakah `/logistics-shipping-costs` dilebur ke form penerimaan; modul kandidat di [M-3+](#m-3--kandidat-belum-ditelusuri) (`goods-return` sudah ditutup).
 
 ### Referensi
 
@@ -445,4 +482,5 @@ URL: `...`
 | 2026-09-05 | Dibuat untuk `goods-receipt` (form INPUT DATA PENERIMAAN PO). |
 | 2026-09-05 | Ditambah `goods-transfer` (form INPUT PINDAH BARANG); ditemukan konflik `K-1`…`K-3` dengan spec `2026-04-19`. |
 | 2026-09-05 | Isi dropdown `Ekspedisi` terverifikasi → `F-1`. Dugaan "PT afiliasi" **terbantah**; `K-1` naik jadi konflik terkonfirmasi. |
+| 2026-09-13 | Jawaban stakeholder masuk (10/11). F-1 direvisi: penanda ekspedisi ada lewat klasifikasi kategori supplier. `goods-return` ditutup. Opsi solusi diputuskan → spec `2026-09-13-logistics-expedition-design.md`; spec `2026-04-19` superseded. Ditambah 8 screenshot pembanding di `docs/reference/programbroiler/`. |
 | 2026-09-05 | Restrukturisasi jadi format unified. Penomoran `P1`–`P11` → `Q-GEN/GR/GT-*` (pemetaan ada di bagian Pertanyaan). Ditambah `F-3` (pola `Delivery`), `F-4` (kondisi ongkos angkut), `M-3+` kandidat, Lampiran A & B. |

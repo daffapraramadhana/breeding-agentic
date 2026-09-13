@@ -1,7 +1,7 @@
 # Goods Transfer — Expedition Data & Dispatch Lifecycle
 
 **Date:** 2026-04-19
-**Status:** Design
+**Status:** Superseded — digantikan oleh `2026-09-13-logistics-expedition-design.md`. Asumsi armada internal (vehicle + driver + helper) terbantah oleh jawaban stakeholder `Q-GT-1`=(b) vendor ekspedisi; non-goal "no surat jalan" dicabut oleh `Q-GEN-2`. Lifecycle `PREPARING`/dispatch dipertahankan di spec pengganti.
 **Scope:** `breeding-app` (backend), `breeding-dashboard` (frontend), Prisma schema
 
 ---
