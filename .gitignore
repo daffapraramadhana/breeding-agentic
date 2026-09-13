@@ -8,3 +8,4 @@ breeding-dashboard/
 # OS
 .DS_Store
 Thumbs.db
+.superpowers/
