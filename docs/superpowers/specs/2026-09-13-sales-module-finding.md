@@ -1,7 +1,8 @@
 # Modul Penjualan — Finding Alur Penuh
 
 **Dibuat:** 2026-09-13
-**Status:** Terbuka — alur pembanding sudah ditelusuri langsung (sesi login user), belum ada jawaban stakeholder
+**Status:** 19/20 terjawab (2026-09-26) — lihat [Jawaban stakeholder](#jawaban-stakeholder). Sisa terbuka: `Q-CU-4` (pembekuan piutang & cicilan) + 4 sub-pertanyaan.
+**Jawaban:** `docs/stakeholder/2026-09-13-pertanyaan-modul-penjualan-jawaban.pdf`
 **Sumber pembanding:** `app1.programbroiler.com` — menu Marketing, Keuangan, Master (ditelusuri via browser 2026-09-13)
 **Repo terdampak:** `breeding-app` (Prisma `SalesOrder`, `Customer`, `Delivery`, `SalesInvoice`, `SalesPayment`), `breeding-dashboard`
 **Screenshot:** `docs/reference/programbroiler/2026-09-13-sales-*.png`, `2026-09-13-customer-*.png`
@@ -282,6 +283,71 @@ Setara. Tidak ada gap berarti.
 
 ---
 
+## Jawaban stakeholder
+
+Diterima 2026-09-26 (`docs/stakeholder/2026-09-13-pertanyaan-modul-penjualan-jawaban.pdf`). Kode di kolom kiri = kode di dokumen pertanyaan.
+
+### Pesanan & realisasi
+
+| # | Jawaban | Konsekuensi |
+|---|---|---|
+| A1 `Q-SO-1` | **(b) Selalu satu kali** | Satu DO = satu peristiwa realisasi (satu header). **Bertentangan dengan data yang kami lihat** (DO.Budidaya.000001 punya 2 baris dengan tanggal ambil berbeda) — lihat [Konflik K-S1](#konflik-k-s1). Rancangan: header realisasi 1:1 ke DO, baris boleh banyak (per kandang / DTPS). |
+| A2 `Q-SO-1` | **(b) Boleh melebihi, dengan peringatan** | Tidak diblok; sistem memberi warning saat total ekor/tonase realisasi > pesanan. |
+| A3 `Q-SO-2` | DTPS = **Data Timbangan PS**; nomor dari **Numerator Form Timbangan**; **unik** | Kolom `dtpsNumber` + unique per tenant. Sumber nomor = form timbangan (di luar modul penjualan) → untuk sekarang input manual, divalidasi unik. |
+| A4 `Q-SO-3` | **Bukan checkbox — radio 2 pilihan:** 1) Timbang Kandang (di kandang/asal) 2) Timbang Kirim (di customer/tujuan) | Enum `WeighingLocation { ORIGIN_COOP, DESTINATION_CUSTOMER }` di realisasi. Tidak perlu tarik data recording harian. |
+| A5 `Q-SO-4` | Harga Rekomendasi = **dari harga terakhir**; Bobot Minimum = **Standarisasi Ayam Besar**; Harga Jual **bebas** (free text) | Harga rekomendasi dihitung dari transaksi terakhir (lihat sub-pertanyaan terbuka). Butuh master *Standarisasi Ayam Besar*. Tidak ada validasi harga minimum. |
+| A6 `Q-SO-5` | **(b) Harga berbeda — afkir lebih murah** | `isCulled` per baris + harga diketik manual (tidak perlu master harga afkir; harga bebas per A5). Stok tidak dipisah. |
+| A7 `Q-SO-6` | **(a) Otomatis ditolak sistem** | Perlu `validUntil` + job harian yang menolak DO kadaluarsa. |
+| A8 `Q-SO-7` | **(c) Bakul selalu jemput sendiri; pengiriman jarang** | `Delivery` **tidak** diinvestasikan. Plat nomor dari master customer tampil di realisasi. |
+
+### Customer & piutang
+
+| # | Jawaban | Konsekuensi |
+|---|---|---|
+| B1 `Q-CU-1` | **(b) Masuk antrian approval** — disetujui kantor pusat (user tertentu) atau plafon dinaikkan | Status `CREDIT_LIMIT_PROCESSING` → `CREDIT_LIMIT_APPROVED/REJECTED` kita memang dipakai. Perlu hak akses approval. |
+| B2 `Q-CU-2` | "Pusat" = **Sales Manager**; approval berlaku **sampai customer bayar** (bukan per DO); N hari dihitung dari **pembayaran terakhir** | Perlu `lastPaymentDate` per customer + flag "TOP override aktif sampai ada pembayaran". |
+| B3 `Q-CU-3` | **(a) Milik customer — bisa dipakai bayar piutang dan bisa di-refund** | Perlu saldo tabungan per customer + riwayat masuk/keluar. Sub-pertanyaan (batas waktu / bunga) **tidak dijawab** → asumsi: tidak ada. |
+| B4 `Q-CU-4` | **TIDAK DIJAWAB** (4 sub-pertanyaan kosong) | Pembekuan piutang & Cicilan/Kg **ditunda**. Kolom `installmentPerKg` boleh disiapkan di master, tapi mekanismenya belum dibangun. |
+| B5 `Q-CU-5` | **(a) Customer hanya bisa pesan di area yang dicentang** | M2M `CustomerBranch` + filter dropdown customer per area di form pesanan. |
+| B6 `Q-CU-6` | **(a) Satu plat per customer cukup** | Kolom `vehiclePlate` di master, tampil otomatis (read-only) di realisasi. |
+
+### Faktur & pembayaran
+
+| # | Jawaban | Konsekuensi |
+|---|---|---|
+| C1 `Q-PAY-1` | **(b) Per DO** | `SalesInvoice` 1:1 ke `SalesOrder` — **struktur kita sekarang sudah benar**. Faktur gabungan tidak dibuat. |
+| C2 `Q-PAY-2` | **(a) Ke saldo piutang customer secara keseluruhan** | Pembayaran mengurangi saldo berjalan customer (tertua dulu), **bukan** per faktur. `SalesPayment.salesInvoiceId` harus jadi opsional + perlu ledger piutang per customer. |
+| C3 `Q-PAY-3` | **(a) Otomatis masuk tabungan / saldo customer** | Kelebihan bayar → kredit tabungan otomatis, bukan refund otomatis. Refund tetap ada sebagai aksi terpisah (B3=a). |
+| C4 `Q-PAY-4` | Verifikasi oleh **Keuangan Pusat**; cek **mutasi bank + bukti transfer**; sebelum diverifikasi piutang **belum berkurang** | `PaymentStatus.PENDING` tidak mengubah saldo; hanya `VERIFIED` yang masuk ledger. |
+
+### Susulan ekspedisi
+
+| # | Jawaban | Konsekuensi |
+|---|---|---|
+| D1 `Q-GT-3` | **(b) Disalin dari dokumen fisik, WAJIB diisi sebelum berangkat** | **Mengubah fitur yang sudah rilis**: `deliveryNoteNumber` wajib saat `dispatch`. Sub-pertanyaan (nomor kembar) tidak dijawab → tetap tidak unik. |
+| D2 `Q-GEN-2` | **(a) Ya — nama ekspedisi + nomor surat jalan** | Sesuai yang sudah dibangun. Tidak ada perubahan. |
+
+### Konflik K-S1
+
+A1 = "selalu satu kali", tetapi data nyata di aplikasi acuan menunjukkan satu DO dengan **dua baris realisasi bertanggal ambil berbeda** (07/09 dan 09/09). Dua pembacaan yang mungkin:
+
+1. Satu DO = satu *peristiwa* realisasi (satu tanggal realisasi di header), tapi **rinciannya boleh banyak baris** (per kandang / per DTPS). Data yang kami lihat adalah kasus ini.
+2. Data yang kami lihat adalah data uji coba yang tidak mencerminkan praktik.
+
+**Rancangan yang dipakai** (aman untuk kedua pembacaan): `SalesRealization` header 1:1 dengan `SalesOrder`, `SalesRealizationLine` boleh banyak. Kalau ternyata pembacaan (2) yang benar, tinggal membatasi jumlah baris — tidak ada perubahan schema.
+
+### Sub-pertanyaan yang belum terjawab
+
+| Kode | Pertanyaan | Asumsi sementara |
+|---|---|---|
+| `Q-CU-4` (B4) | Seluruh alur pembekuan piutang & Cicilan/Kg | Ditunda; tidak dibangun |
+| A3 | "Wajib diisi di setiap realisasi?" — dijawab "sudah ada di dalam form" (ambigu) | Wajib, karena unik |
+| A5 | "Harga terakhir" — terakhir per produk, per customer, atau per area? | Per produk per customer |
+| B3 | Tabungan ada batas waktu / bunga? | Tidak ada |
+| D1 | Nomor surat jalan perlu dipastikan tidak kembar? | Tidak unik |
+
+---
+
 ## Pertanyaan stakeholder
 
 ### Pesanan & realisasi — `Q-SO-*`
@@ -317,14 +383,19 @@ Setara. Tidak ada gap berarti.
 
 Belum diputuskan. Urutan pengerjaan yang masuk akal:
 
-| Tahap | Isi | Menjawab |
-|---|---|---|
-| **S-A** Master customer | kolom baru (KTP, NPWP, plat, TOP, cicilan/kg, tabungan/kg, plafon toggle, area pendaftaran) + `CustomerBranch` M2M | `Q-CU-5`, `Q-CU-6` |
-| **S-B** Pesanan terstruktur | `SalesOrderLine.productId` + `sourceWarehouseId`/`sourceCoopId` + `isCulled` + `savingsPerKg`; header `recipientName`, `recipientAddress`, `validUntil`, `vatPercent`; nomor `DO.<area>.<seq>`; sisa stok tampil | `Q-SO-4/5/6` |
-| **S-C** Realisasi | entitas `SalesRealization` + `SalesRealizationLine` (tanggalAmbil, project/kandang, dtpsNumber, qty, tonase, afkir, harga, diskon, biayaAdmin, tabungan, cicilan); stok ayam berkurang di sini; `Delivery` menempel ke realisasi | `Q-SO-1/2/3/7/8` |
-| **S-D** Piutang customer | `CustomerLedger` (debit realisasi, kredit pembayaran, tabungan, refund, pembekuan); `SalesPayment` per customer bukan per invoice; faktur gabungan | `Q-CU-1..4`, `Q-PAY-*` |
+Setelah jawaban masuk (2026-09-26), urutan menjadi:
 
-S-A dan S-B tidak bergantung jawaban stakeholder; S-C butuh `Q-SO-1..3`; S-D butuh hampir semua `Q-CU`/`Q-PAY`.
+| Tahap | Isi | Status |
+|---|---|---|
+| **S-0** Surat jalan wajib | `deliveryNoteNumber` wajib saat `dispatch` goods-transfer (D1=b) | Siap — mengubah fitur yang sudah rilis, perubahan kecil |
+| **S-A** Master customer | kolom baru: `registrationBranchId`, `idCardNumber`, `taxNumber`, `vehiclePlate`, `creditLimitEnabled`, `topDays`, `savingsPerKg`, `installmentPerKg` + `CustomerBranch` M2M (B5=a → dipakai untuk **filter**, bukan sekadar catatan) | Siap |
+| **S-B** Pesanan terstruktur | `SalesOrderLine.productId` + asal (`sourceWarehouseId`/`sourceCoopId`) + `isCulled` + `savingsPerKg` + `avgWeightKg`; header `recipientName`, `recipientAddress`, `validUntil`, `vatPercent`; nomor `DO.<area>.<seq>`; sisa stok & harga rekomendasi (harga terakhir) tampil; auto-reject DO kadaluarsa (A7=a) | Siap |
+| **S-B2** Master Standarisasi Ayam Besar | master range nilai → sumber Bobot Minimum (A5) | Siap |
+| **S-C** Realisasi | `SalesRealization` (1:1 ke DO, `realizationDate`, `weighingLocation` enum ORIGIN_COOP/DESTINATION_CUSTOMER, plat dari customer) + `SalesRealizationLine` (tanggalAmbil, project/kandang, `dtpsNumber` unik, qty, tonase, afkir, harga, diskon, biayaAdmin, tabungan); warning kalau melebihi pesanan (A2=b); stok ayam berkurang di sini | Siap (lihat konflik `K-S1`) |
+| **S-D** Piutang & tabungan customer | `CustomerLedger` (debit dari faktur per DO, kredit dari pembayaran terverifikasi, tabungan masuk/keluar, refund); `SalesPayment.salesInvoiceId` jadi opsional — pembayaran ke saldo (tertua dulu, C2=a); hanya `VERIFIED` yang mengubah saldo (C4); kelebihan bayar → tabungan (C3=a) | Siap **kecuali** pembekuan piutang & cicilan/kg (`Q-CU-4` belum dijawab) |
+| **S-E** Pembekuan piutang & cicilan/kg | — | **Terblokir** — menunggu `Q-CU-4` |
+
+Tidak dikerjakan: faktur gabungan (C1=b → per DO, struktur kita sudah benar) dan pengembangan `Delivery` (A8=c → bakul jemput sendiri).
 
 ---
 
@@ -340,4 +411,5 @@ S-A dan S-B tidak bergantung jawaban stakeholder; S-C butuh `Q-SO-1..3`; S-D but
 
 | Tanggal | Perubahan |
 |---|---|
+| 2026-09-26 | Jawaban stakeholder masuk (19/20). Konflik `K-S1` (A1 vs data nyata) dicatat. `Q-CU-4` pembekuan piutang ditunda. D1 mengubah fitur ekspedisi yang sudah rilis: surat jalan jadi wajib saat dispatch. |
 | 2026-09-13 | Dibuat. Alur ditelusuri langsung: list, detail, edit realisasi, jual ke peternak, pengiriman, penerimaan uang, refund, pembekuan, master customer (tooltip), master pendukung. |
