@@ -1,7 +1,7 @@
 # Master Data Penjualan — Customer Lengkap & Standarisasi Ayam Besar
 
 **Dibuat:** 2026-09-26
-**Status:** Design
+**Status:** Implemented (2026-09-26) — lihat plan `docs/superpowers/plans/2026-09-26-sales-master-data.md`
 **Sumber keputusan:** `docs/stakeholder/2026-09-13-pertanyaan-modul-penjualan-jawaban.pdf`, `docs/superpowers/specs/2026-09-13-sales-module-finding.md`
 **Repo terdampak:** `breeding-app` (Prisma, master-data), `breeding-dashboard`
 **Tahap:** S-A + S-B2 di [peta tahapan](2026-09-13-sales-module-finding.md#opsi-solusi) — prasyarat untuk pesanan terstruktur (S-B)
