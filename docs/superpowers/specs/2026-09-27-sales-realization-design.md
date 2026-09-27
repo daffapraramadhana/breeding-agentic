@@ -100,6 +100,7 @@ model SalesRealizationLine {
   savingsPerKg        Decimal? @map("savings_per_kg") @db.Decimal(18, 2)
   installmentPerKg    Decimal? @map("installment_per_kg") @db.Decimal(18, 2)
   totalPrice          Decimal? @map("total_price") @db.Decimal(18, 2)
+  allocationReleased  Int      @default(0) @map("allocation_released")
   lineNotes           String?  @map("line_notes") @db.Text
   createdAt           DateTime @default(now()) @map("created_at")
   updatedAt           DateTime @updatedAt @map("updated_at")
@@ -144,6 +145,8 @@ Menghapus baris membalik urutannya: gerakan `IN` dulu, baru alokasi ditahan kemb
 Jumlah yang dilepas per baris adalah `min(ekor baris, sisa tahanan DO di kandang itu)`, di mana sisa tahanan = total ekor baris **pesanan** di kandang tersebut dikurangi total ekor baris **realisasi** yang sudah tercatat di kandang yang sama.
 
 Ini yang membuat R5 bekerja tanpa perlakuan khusus: kelebihan realisasi tidak punya alokasi untuk dilepas, jadi `min` menghasilkan nol dan tidak ada yang perlu dihitung.
+
+Jumlah yang benar-benar dilepas **disimpan di barisnya** sebagai `allocationReleased`. Saat baris dihapus, yang ditahan kembali adalah angka itu, bukan hasil hitung ulang dari total. Menghitung ulang berarti menurunkan angka lama dari keadaan baru, dan setiap baris lain yang berubah di antaranya membuat hasilnya meleset — kelas kesalahan yang sama dengan snapshot baris basi yang ditemukan di review S-B.
 
 ## Aturan penolakan
 
@@ -209,7 +212,7 @@ Yang wajib dibuktikan, bukan diasumsikan:
 1. Menambah baris memotong stok kandang tepat sebanyak ekornya, sekali.
 2. Menambah baris melepas alokasi DO tepat sebanyak yang masih ditahannya, tidak lebih.
 3. Baris yang ekornya melebihi stok ditolak dan **tidak menyisakan gerakan** di ledger.
-4. Menghapus baris memulihkan stok **dan** menahan kembali alokasinya.
+4. Menghapus baris memulihkan stok **dan** menahan kembali persis `allocationReleased`, bukan hasil hitung ulang.
 5. Mengubah baris membalik yang lama lalu menerapkan yang baru; selisih saldonya benar.
 6. `avgWeightKg` tidak pernah berbeda dari `totalWeightKg ÷ birdCount`, termasuk saat klien mengirim nilai yang bertentangan.
 7. DTPS kembar di tenant yang sama ditolak 409, termasuk lintas realisasi.
