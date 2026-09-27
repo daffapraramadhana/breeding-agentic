@@ -1,7 +1,7 @@
 # Ledger Populasi Kandang
 
 **Dibuat:** 2026-09-27
-**Status:** Design — menunggu plan
+**Status:** Implemented (2026-09-27) — lihat plan `docs/superpowers/plans/2026-09-27-coop-population-ledger.md`
 **Sumber keputusan:** brainstorming 2026-09-27 (keputusan pengguna dicatat di [Keputusan yang mengikat](#keputusan-yang-mengikat))
 **Repo terdampak:** `breeding-app` (Prisma, modul `project`), `breeding-dashboard`
 **Tahap:** prasyarat **S-B** pesanan terstruktur di [peta tahapan modul penjualan](2026-09-13-sales-module-finding.md#opsi-solusi)
