@@ -246,7 +246,7 @@ melewati soft delete memunculkan 500 berisi string Prisma.
 
 | Metode | Rute | Peran | Isi |
 |---|---|---|---|
-| GET | `/coop-populations` | semua | saldo per project-coop; filter `projectId`, `coopId`, `branchId`, `farmId`; menyertakan nama kandang/farm/area |
+| GET | `/coop-populations` | semua | saldo per project-coop; filter `projectId`, `coopId`, `branchId`, `farmId`, `includeInactive`; menyertakan nama kandang/farm/area |
 | GET | `/coop-populations/:projectCoopId` | semua | satu saldo |
 | GET | `/coop-populations/:projectCoopId/movements` | semua | ledger, terbaru dulu, paginasi |
 | POST | `/coop-populations/:projectCoopId/adjustments` | MANAGER+ | koreksi manual, `{ quantity: number, direction: 'IN' \| 'OUT', reason: string, movementDate: string }` — `reason` tersimpan di `notes` gerakan |
@@ -254,6 +254,14 @@ melewati soft delete memunculkan 500 berisi string Prisma.
 | GET/POST | `/coop-bird-transfers` | MANAGER+ | pindah ayam |
 
 Respons tetap dibungkus `{ data, statusCode, timestamp }` oleh `TransformInterceptor`.
+
+### Arah baca daftar
+
+`GET /coop-populations` membaca dari **`ProjectCoop`** dan menempelkan saldo sebagai relasi
+opsional, bukan sebaliknya. Baris saldo dibuat malas — baru ada saat gerakan pertama ditulis —
+sehingga kandang yang belum pernah bergerak tetap muncul dengan nilai nol, bukan hilang dari
+daftar. Ini yang membuat kandang lama terdampak K7 tetap terlihat dan bisa dibetulkan lewat
+koreksi manual.
 
 ## Frontend
 
