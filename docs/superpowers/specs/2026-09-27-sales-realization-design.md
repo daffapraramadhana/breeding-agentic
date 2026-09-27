@@ -1,7 +1,7 @@
 # Realisasi DO (S-C)
 
 **Dibuat:** 2026-09-27
-**Status:** Design — menunggu plan
+**Status:** Implemented (2026-09-27) — lihat plan `docs/superpowers/plans/2026-09-27-sales-realization.md`
 **Sumber keputusan:** `docs/stakeholder/2026-09-13-pertanyaan-modul-penjualan-jawaban.pdf`, [finding modul penjualan §S-2](2026-09-13-sales-module-finding.md#s-2--realisasi-do), brainstorming 2026-09-27
 **Repo terdampak:** `breeding-app` (Prisma, modul `sales`), `breeding-dashboard`
 **Tahap:** **S-C** di [peta tahapan](2026-09-13-sales-module-finding.md#opsi-solusi) — prasyaratnya, [ledger populasi](2026-09-27-coop-population-ledger-design.md) dan [pesanan terstruktur](2026-09-27-sales-structured-order-design.md), sudah selesai

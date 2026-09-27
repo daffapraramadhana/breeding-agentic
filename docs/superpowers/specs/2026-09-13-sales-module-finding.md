@@ -336,13 +336,17 @@ A1 = "selalu satu kali", tetapi data nyata di aplikasi acuan menunjukkan satu DO
 
 **Rancangan yang dipakai** (aman untuk kedua pembacaan): `SalesRealization` header 1:1 dengan `SalesOrder`, `SalesRealizationLine` boleh banyak. Kalau ternyata pembacaan (2) yang benar, tinggal membatasi jumlah baris — tidak ada perubahan schema.
 
+**Terselesaikan (2026-09-27).** Layar acuan hanya satu ("Modify Data Realisasi DO") dengan satu
+header dan banyak baris, jadi "2 realisasi" pada contoh itu dua **baris** pengambilan berbeda DTPS.
+Jawaban A1 dan data yang diamati sejalan. Dibangun sebagai header 1:1 ke DO dengan banyak baris.
+
 ### Sub-pertanyaan yang belum terjawab
 
 | Kode | Pertanyaan | Asumsi sementara |
 |---|---|---|
 | `Q-CU-4` (B4) | Seluruh alur pembekuan piutang & Cicilan/Kg | Ditunda; tidak dibangun |
 | `Q-SO-8` | Biaya Admin (per Kg) "Ke Peternak" — potongan ke mitra? masuk ke mana di akuntansi? | Pembuatan pesanan ke peternak **sudah dibangun** (2026-09-27, produk + kuantitas + harga, tanpa kandang dan tanpa alokasi). Biaya admin per kg-nya belum — menunggu jawaban ini. |
-| A3 | "Wajib diisi di setiap realisasi?" — dijawab "sudah ada di dalam form" (ambigu) | Wajib, karena unik |
+| A3 | "Wajib diisi di setiap realisasi?" — dijawab "sudah ada di dalam form" (ambigu) | **Diputuskan (2026-09-27): wajib dan unik per tenant**, mengikuti preseden D1 |
 | A5 | "Harga terakhir" — terakhir per produk, per customer, atau per area? | Per produk per customer |
 | B3 | Tabungan ada batas waktu / bunga? | Tidak ada |
 | D1 | Nomor surat jalan perlu dipastikan tidak kembar? | Tidak unik |
@@ -392,7 +396,7 @@ Setelah jawaban masuk (2026-09-26), urutan menjadi:
 | **S-A** Master customer | kolom baru: `registrationBranchId`, `idCardNumber`, `taxNumber`, `vehiclePlate`, `creditLimitEnabled`, `topDays`, `savingsPerKg`, `installmentPerKg` + `CustomerBranch` M2M (B5=a → dipakai untuk **filter**, bukan sekadar catatan) | Selesai (2026-09-26) |
 | **S-B** Pesanan terstruktur | `SalesOrderLine.productId` + asal (`sourceWarehouseId`/`sourceCoopId`) + `isCulled` + `savingsPerKg` + `avgWeightKg`; header `recipientName`, `recipientAddress`, `validUntil`, `vatPercent`; nomor `DO.<area>.<seq>`; sisa stok & harga rekomendasi (harga terakhir) tampil; auto-reject DO kadaluarsa (A7=a) | Selesai (2026-09-27) |
 | **S-B2** Master Standarisasi Ayam Besar | master range nilai → sumber Bobot Minimum (A5) | Selesai (2026-09-26) |
-| **S-C** Realisasi | `SalesRealization` (1:1 ke DO, `realizationDate`, `weighingLocation` enum ORIGIN_COOP/DESTINATION_CUSTOMER, plat dari customer) + `SalesRealizationLine` (tanggalAmbil, project/kandang, `dtpsNumber` unik, qty, tonase, afkir, harga, diskon, biayaAdmin, tabungan); warning kalau melebihi pesanan (A2=b); stok ayam berkurang di sini | Siap (lihat konflik `K-S1`) |
+| **S-C** Realisasi | `SalesRealization` (1:1 ke DO, `realizationDate`, `weighingLocation` enum ORIGIN_COOP/DESTINATION_CUSTOMER, plat dari customer) + `SalesRealizationLine` (tanggalAmbil, project/kandang, `dtpsNumber` unik, qty, tonase, afkir, harga, diskon, biayaAdmin, tabungan); warning kalau melebihi pesanan (A2=b); stok ayam berkurang di sini | Selesai (2026-09-27) |
 | **S-D** Piutang & tabungan customer | `CustomerLedger` (debit dari faktur per DO, kredit dari pembayaran terverifikasi, tabungan masuk/keluar, refund); `SalesPayment.salesInvoiceId` jadi opsional — pembayaran ke saldo (tertua dulu, C2=a); hanya `VERIFIED` yang mengubah saldo (C4); kelebihan bayar → tabungan (C3=a) | Siap **kecuali** pembekuan piutang & cicilan/kg (`Q-CU-4` belum dijawab) |
 | **S-E** Pembekuan piutang & cicilan/kg | — | **Terblokir** — menunggu `Q-CU-4` |
 
