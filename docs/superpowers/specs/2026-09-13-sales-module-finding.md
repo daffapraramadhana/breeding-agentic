@@ -341,7 +341,7 @@ A1 = "selalu satu kali", tetapi data nyata di aplikasi acuan menunjukkan satu DO
 | Kode | Pertanyaan | Asumsi sementara |
 |---|---|---|
 | `Q-CU-4` (B4) | Seluruh alur pembekuan piutang & Cicilan/Kg | Ditunda; tidak dibangun |
-| `Q-SO-8` | Biaya Admin (per Kg) "Ke Peternak" — potongan ke mitra? masuk ke mana di akuntansi? | Ditunda; jalur penjualan ke peternak tidak dibangun di S-B |
+| `Q-SO-8` | Biaya Admin (per Kg) "Ke Peternak" — potongan ke mitra? masuk ke mana di akuntansi? | Pembuatan pesanan ke peternak **sudah dibangun** (2026-09-27, produk + kuantitas + harga, tanpa kandang dan tanpa alokasi). Biaya admin per kg-nya belum — menunggu jawaban ini. |
 | A3 | "Wajib diisi di setiap realisasi?" — dijawab "sudah ada di dalam form" (ambigu) | Wajib, karena unik |
 | A5 | "Harga terakhir" — terakhir per produk, per customer, atau per area? | Per produk per customer |
 | B3 | Tabungan ada batas waktu / bunga? | Tidak ada |
