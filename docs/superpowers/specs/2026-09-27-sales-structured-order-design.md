@@ -1,7 +1,7 @@
 # Pesanan Penjualan Terstruktur (S-B)
 
 **Dibuat:** 2026-09-27
-**Status:** Design — menunggu plan
+**Status:** Implemented (2026-09-27) — lihat plan `docs/superpowers/plans/2026-09-27-sales-structured-order.md`
 **Sumber keputusan:** `docs/stakeholder/2026-09-13-pertanyaan-modul-penjualan-jawaban.pdf`, [finding modul penjualan](2026-09-13-sales-module-finding.md), brainstorming 2026-09-27
 **Repo terdampak:** `breeding-app` (Prisma, modul `sales`, modul `project`), `breeding-dashboard`
 **Tahap:** **S-B** di [peta tahapan](2026-09-13-sales-module-finding.md#opsi-solusi) — prasyaratnya, [ledger populasi kandang](2026-09-27-coop-population-ledger-design.md), sudah selesai
