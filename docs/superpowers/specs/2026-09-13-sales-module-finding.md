@@ -1,7 +1,7 @@
 # Modul Penjualan — Finding Alur Penuh
 
 **Dibuat:** 2026-09-13
-**Status:** 19/20 terjawab (2026-09-26) — lihat [Jawaban stakeholder](#jawaban-stakeholder). Sisa terbuka: `Q-CU-4` (pembekuan piutang & cicilan) + 4 sub-pertanyaan.
+**Status:** 16/18 terjawab (2026-09-26) — lihat [Jawaban stakeholder](#jawaban-stakeholder). Sisa terbuka: `Q-CU-4` (pembekuan piutang & cicilan) dan `Q-SO-8` (Biaya Admin per Kg ke peternak), + 4 sub-pertanyaan. Setiap jawaban yang masuk menyangkut jalur **customer**; tidak ada satu pun yang menyentuh penjualan ke peternak.
 **Jawaban:** `docs/stakeholder/2026-09-13-pertanyaan-modul-penjualan-jawaban.pdf`
 **Sumber pembanding:** `app1.programbroiler.com` — menu Marketing, Keuangan, Master (ditelusuri via browser 2026-09-13)
 **Repo terdampak:** `breeding-app` (Prisma `SalesOrder`, `Customer`, `Delivery`, `SalesInvoice`, `SalesPayment`), `breeding-dashboard`
@@ -341,6 +341,7 @@ A1 = "selalu satu kali", tetapi data nyata di aplikasi acuan menunjukkan satu DO
 | Kode | Pertanyaan | Asumsi sementara |
 |---|---|---|
 | `Q-CU-4` (B4) | Seluruh alur pembekuan piutang & Cicilan/Kg | Ditunda; tidak dibangun |
+| `Q-SO-8` | Biaya Admin (per Kg) "Ke Peternak" — potongan ke mitra? masuk ke mana di akuntansi? | Ditunda; jalur penjualan ke peternak tidak dibangun di S-B |
 | A3 | "Wajib diisi di setiap realisasi?" — dijawab "sudah ada di dalam form" (ambigu) | Wajib, karena unik |
 | A5 | "Harga terakhir" — terakhir per produk, per customer, atau per area? | Per produk per customer |
 | B3 | Tabungan ada batas waktu / bunga? | Tidak ada |
